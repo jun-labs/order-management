@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.io.app.core.order.domain.Order;
+import project.io.app.core.order.domain.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,7 +24,8 @@ class OrderUnitTest {
             1L,
             "마케팅 결제 외 2건",
             new BigDecimal("100000.00"),
-            1L,
+            "고객명",
+            OrderStatus.PROCESSING,
             now
         );
     }
@@ -36,7 +38,8 @@ class OrderUnitTest {
             1L,
             "마케팅 결제 외 2건",
             new BigDecimal("100000.00"),
-            1L,
+            "고객명",
+            OrderStatus.PROCESSING,
             now
         );
 
@@ -44,12 +47,11 @@ class OrderUnitTest {
             () -> assertThat(newOrder.getId()).isEqualTo(1L),
             () -> assertThat(newOrder.getName()).isEqualTo("마케팅 결제 외 2건"),
             () -> assertThat(newOrder.getTotalPrice()).isEqualTo(new BigDecimal("100000.00")),
-            () -> assertThat(newOrder.getUserId()).isEqualTo(1L),
+            () -> assertThat(newOrder.getCustomerName()).isEqualTo("고객명"),
+            () -> assertThat(newOrder.getOrderStatus()).isEqualTo(OrderStatus.PROCESSING),
             () -> assertThat(newOrder.getOrderDate()).isEqualTo(now),
             () -> assertThat(newOrder.getCreatedAt()).isEqualTo(now),
             () -> assertThat(newOrder.getLastModifiedAt()).isEqualTo(now),
-            () -> assertThat(newOrder.getCreatedBy()).isEqualTo(1L),
-            () -> assertThat(newOrder.getLastModifiedBy()).isEqualTo(1L),
             () -> assertThat(newOrder.isDeleted()).isFalse()
         );
     }
@@ -63,7 +65,8 @@ class OrderUnitTest {
             null,
             "마케팅 결제 외 2건",
             new BigDecimal("100000.00"),
-            1L,
+            "고객명",
+            OrderStatus.PROCESSING,
             now
         ))
             .isInstanceOf(IllegalArgumentException.class)
@@ -79,7 +82,8 @@ class OrderUnitTest {
             1L,
             "  ",
             new BigDecimal("100000.00"),
-            1L,
+            "고객명",
+            OrderStatus.PROCESSING,
             now
         ))
             .isInstanceOf(IllegalArgumentException.class)
@@ -95,7 +99,8 @@ class OrderUnitTest {
             1L,
             "마케팅 결제 외 2건",
             null,
-            1L,
+            "고객명",
+            OrderStatus.PROCESSING,
             now
         ))
             .isInstanceOf(IllegalArgumentException.class)
@@ -112,7 +117,8 @@ class OrderUnitTest {
                 1L,
                 "마케팅 결제 외 2건",
                 BigDecimal.ZERO,
-                1L,
+                "고객명",
+                OrderStatus.PROCESSING,
                 now
             ))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -122,7 +128,8 @@ class OrderUnitTest {
                 1L,
                 "마케팅 결제 외 2건",
                 new BigDecimal("-100"),
-                1L,
+                "고객명",
+                OrderStatus.PROCESSING,
                 now
             ))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -131,8 +138,8 @@ class OrderUnitTest {
     }
 
     @Test
-    @DisplayName("userId가 null이면 IllegalArgumentException이 발생한다.")
-    void whenUserIdIsNullThenIllegalArgumentExceptionShouldBeThrown() {
+    @DisplayName("고객명이 null이면 IllegalArgumentException이 발생한다.")
+    void whenCustomerNameIsNullThenIllegalArgumentExceptionShouldBeThrown() {
         final LocalDateTime now = LocalDateTime.now();
 
         assertThatThrownBy(() -> new Order(
@@ -140,10 +147,11 @@ class OrderUnitTest {
             "마케팅 결제 외 2건",
             new BigDecimal("100000.00"),
             null,
+            OrderStatus.PROCESSING,
             now
         ))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("올바른 고객 ID를 입력해주세요.");
+            .hasMessage("올바른 고객명을 입력해주세요.");
     }
 
     @Test
@@ -153,7 +161,8 @@ class OrderUnitTest {
             1L,
             "마케팅 결제 외 2건",
             new BigDecimal("100000.00"),
-            1L,
+            "고객명",
+            OrderStatus.PROCESSING,
             null
         ))
             .isInstanceOf(IllegalArgumentException.class)
