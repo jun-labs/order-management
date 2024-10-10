@@ -1,5 +1,5 @@
 external:
-  url: ${URL}
+  url: https://external.api/orders/
 
 springdoc:
   api-docs:
