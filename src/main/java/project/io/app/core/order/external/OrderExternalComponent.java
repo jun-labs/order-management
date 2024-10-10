@@ -12,7 +12,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import static project.io.app.common.codeandmessage.CommonCodeAndMessage.BAD_GATEWAY;
 import static project.io.app.common.codeandmessage.CommonCodeAndMessage.INVALID_ARGUMENT;
 import project.io.app.common.exception.ExternalDataFetchingFailedException;
 import project.io.app.common.exception.InvalidDataFetchingException;
@@ -32,19 +31,18 @@ public class OrderExternalComponent {
     private final RestTemplate restTemplate;
 
     @Retryable(
-        value = {HttpServerErrorException.class, ResourceAccessException.class},
-        maxAttempts = 3,
+        retryFor = {HttpServerErrorException.class, ResourceAccessException.class},
         backoff = @Backoff(delay = 1_000, maxDelay = 3_000, multiplier = 1.5, random = true)
     )
     public OrderSaveCommand fetchOrderData(final Long orderId) {
         try {
             final String url = this.url + orderId;
             final ResponseEntity<OrderDataResponse> response = restTemplate.getForEntity(url, OrderDataResponse.class);
+            validator.validate(response);
             final OrderDataResponse payload = response.getBody();
-            validator.validate(payload);
             return createCommand(payload);
         } catch (HttpClientErrorException | IllegalArgumentException ex) {
-            log.error("주문 데이터를 받아오는데 실패했습니다. 주문 ID: {}", orderId);
+            log.error("주문 데이터를 받아오는데 실패했습니다. 주문 ID:{}", orderId);
             throw new InvalidDataFetchingException(INVALID_ARGUMENT);
         }
     }
@@ -62,10 +60,10 @@ public class OrderExternalComponent {
 
     @Recover
     public OrderSaveCommand recover(
-        final Exception ex,
+        final ExternalDataFetchingFailedException ex,
         final Long orderId
     ) {
         log.error("모든 재시도가 실패했습니다. 주문 ID: {}", orderId, ex);
-        throw new ExternalDataFetchingFailedException(BAD_GATEWAY);
+        throw ex;
     }
 }
