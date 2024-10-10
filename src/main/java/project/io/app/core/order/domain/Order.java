@@ -61,4 +61,8 @@ public class Order extends BaseEntity {
             throw new IllegalArgumentException("주문 날짜를 입력해주세요.");
         }
     }
+
+    public String getOrderDateAsString() {
+        return orderDate.toString();
+    }
 }

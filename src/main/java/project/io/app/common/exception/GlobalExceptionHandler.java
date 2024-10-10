@@ -33,6 +33,14 @@ public class GlobalExceptionHandler {
             .body(new ErrorResponse(codeAndMessage));
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> resolveBusinessException(final BusinessException ex) {
+        log.error("message:{}", ex.getMessage());
+        final CodeAndMessage codeAndMessage = ex.getCodeAndMessage();
+        return ResponseEntity.status(codeAndMessage.getCode())
+            .body(new ErrorResponse(codeAndMessage));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> resolveMethodArgumentNotValidException(
         final MethodArgumentNotValidException ex
