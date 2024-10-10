@@ -5,7 +5,6 @@ import project.io.app.core.order.domain.Order;
 import project.io.app.core.order.domain.OrderStatus;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 public class OrderDetailResponse {
@@ -15,7 +14,7 @@ public class OrderDetailResponse {
     private BigDecimal totalPrice;
     private String customerName;
     private OrderStatus orderStatus;
-    private LocalDateTime orderDate;
+    private String orderDate;
 
     private OrderDetailResponse() {
     }
@@ -26,6 +25,6 @@ public class OrderDetailResponse {
         this.totalPrice = order.getTotalPrice();
         this.customerName = order.getCustomerName();
         this.orderStatus = order.getOrderStatus();
-        this.orderDate = order.getOrderDate();
+        this.orderDate = order.getOrderDateAsString();
     }
 }
