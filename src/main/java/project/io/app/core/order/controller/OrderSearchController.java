@@ -10,6 +10,8 @@ import project.io.app.common.cursor.Cursor;
 import project.io.app.common.cursor.CursorPageable;
 import project.io.app.common.response.ApiResponse;
 import project.io.app.core.order.controller.response.OrderDetailResponse;
+import project.io.app.core.order.controller.spec.OrderSearchByIdSpec;
+import project.io.app.core.order.controller.spec.OrderSearchOrdersSpec;
 import project.io.app.core.order.domain.Order;
 import project.io.app.core.order.service.OrderReadService;
 
@@ -22,6 +24,7 @@ public class OrderSearchController {
 
     private final OrderReadService orderReadService;
 
+    @OrderSearchByIdSpec
     @GetMapping(path = "/{orderId}")
     public ApiResponse<OrderDetailResponse> searchById(@PathVariable(name = "orderId") final Long orderId) {
         final Order findOrder = orderReadService.findById(orderId);
@@ -29,6 +32,7 @@ public class OrderSearchController {
         return ApiResponse.from(OK, payload);
     }
 
+    @OrderSearchOrdersSpec
     @GetMapping
     public ApiResponse<List<OrderDetailResponse>> searchOrders(@CursorPageable final Cursor cursor) {
         final List<OrderDetailResponse> payload = orderReadService.findOrders(cursor).stream()
