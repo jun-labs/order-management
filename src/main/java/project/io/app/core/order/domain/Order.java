@@ -12,30 +12,34 @@ public class Order extends BaseEntity {
     private final Long id;
     private final String name;
     private final BigDecimal totalPrice;
-    private final Long userId;
+    private final String customerName;
+    private final OrderStatus orderStatus;
     private final LocalDateTime orderDate;
 
     public Order(
         final Long id,
         final String name,
         final BigDecimal totalPrice,
-        final Long userId,
+        final String customerName,
+        final OrderStatus orderStatus,
         final LocalDateTime orderDate
     ) {
-        validate(id, name, totalPrice, userId, orderDate);
+        validate(id, name, totalPrice, customerName, orderStatus, orderDate);
         this.id = id;
         this.name = name;
         this.totalPrice = totalPrice;
-        this.userId = userId;
+        this.customerName = customerName;
+        this.orderStatus = orderStatus;
         this.orderDate = orderDate;
-        initOperationData(userId, orderDate);
+        initOperationData(null, orderDate);
     }
 
     private void validate(
         final Long id,
         final String name,
         final BigDecimal totalPrice,
-        final Long userId,
+        final String customerName,
+        final OrderStatus orderStatus,
         final LocalDateTime orderDate
     ) {
         if (id == null) {
@@ -47,8 +51,11 @@ public class Order extends BaseEntity {
         if (totalPrice == null || totalPrice.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("총 가격은 0보다 커야 합니다.");
         }
-        if (userId == null) {
-            throw new IllegalArgumentException("올바른 고객 ID를 입력해주세요.");
+        if (customerName == null || customerName.isBlank()) {
+            throw new IllegalArgumentException("올바른 고객명을 입력해주세요.");
+        }
+        if (orderStatus == null) {
+            throw new IllegalArgumentException("올바른 주문 상태를 입력해주세요.");
         }
         if (orderDate == null) {
             throw new IllegalArgumentException("주문 날짜를 입력해주세요.");
